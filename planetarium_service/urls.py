@@ -22,9 +22,11 @@ from planetarium_service import settings
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("api/planetarium/", include("planetarium.urls", namespace="planetarium")),
 ]
 
 
 if settings.DEBUG:
     import debug_toolbar
     urlpatterns = [path('__debug__/', include(debug_toolbar.urls))] + urlpatterns
+
