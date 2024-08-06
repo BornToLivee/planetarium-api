@@ -38,7 +38,7 @@ class ShowSessionsSerializer(serializers.ModelSerializer):
         fields = ("id", "astronomy_show", "planetarium_dome", "show_time")
 
 
-class TicketSerializer(serializers.ModelSerializer)
+class TicketSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ticket
         fields = ("id", "row", "seat", "show_session", "reservation")
