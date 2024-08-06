@@ -47,6 +47,12 @@ class ReservationViewSet(viewsets.ModelViewSet):
     queryset = Reservation.objects.select_related("user")
     serializer_class = ReservationSerializer
 
+    def get_queryset(self):
+        return Reservation.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
 
 class ShowSessionsViewSet(viewsets.ModelViewSet):
     queryset = ShowSession.objects.select_related(
@@ -64,12 +70,16 @@ class ShowSessionsViewSet(viewsets.ModelViewSet):
 
 
 class TicketViewSet(viewsets.ModelViewSet):
-    queryset = Ticket.objects.select_related(
-        "show_session__astronomy_show",
-        "show_session__planetarium_dome",
-        "reservation",
-        "reservation__user",
-    )
+
+    def get_queryset(self):
+        user = self.request.user
+        return Ticket.objects.filter(reservation__user=user).select_related(
+            "show_session__astronomy_show",
+            "show_session__planetarium_dome",
+            "reservation",
+            "reservation__user",
+        )
+
 
     def get_serializer_class(self):
         if self.action == "list":
