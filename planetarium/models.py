@@ -6,7 +6,9 @@ from planetarium_service import settings
 class AstronomyShow(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField()
-    show_theme = models.ForeignKey("ShowTheme", on_delete=models.DO_NOTHING, null=True, blank=True)
+    show_theme = models.ForeignKey(
+        "ShowTheme", on_delete=models.DO_NOTHING, null=True, blank=True
+    )
 
     def __str__(self):
         return self.title
@@ -31,6 +33,10 @@ class Reservation(models.Model):
 
     class Meta:
         ordering = ["-created_at"]
+
+    @property
+    def formatted_created_at(self):
+        return self.created_at.strftime("%Y-%m-%d, %H:%M:%S")
 
     def __str__(self):
         return f"Reserved by {self.user}"
