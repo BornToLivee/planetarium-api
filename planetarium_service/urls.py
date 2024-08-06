@@ -23,6 +23,7 @@ from planetarium_service import settings
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/planetarium/", include("planetarium.urls", namespace="planetarium")),
+    path("api/user/", include("user.urls",)),
 ]
 
 
