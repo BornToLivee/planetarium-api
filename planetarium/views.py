@@ -30,8 +30,19 @@ class ShowThemeViewSet(viewsets.ModelViewSet):
 
 
 class AstronomyShowViewSet(viewsets.ModelViewSet):
-    queryset = AstronomyShow.objects.select_related("show_theme")
     permission_classes = [IsAdminOrReadOnly]
+
+    def get_queryset(self):
+        queryset = AstronomyShow.objects.select_related("show_theme")
+
+        title = self.request.query_params.get("title")
+        show_theme = self.request.query_params.get("show_theme")
+
+        if title:
+            queryset = queryset.filter(title__icontains=title)
+        if show_theme:
+            queryset = queryset.filter(show_theme__name__icontains=show_theme)
+        return queryset.distinct()
 
     def get_serializer_class(self):
         if self.action == "list":
@@ -42,9 +53,17 @@ class AstronomyShowViewSet(viewsets.ModelViewSet):
 
 
 class PlanetariumDomeViewSet(viewsets.ModelViewSet):
-    queryset = PlanetariumDome.objects.all()
     serializer_class = PlanetariumDomeSerializer
     permission_classes = [IsAdminOrReadOnly]
+
+    def get_queryset(self):
+        queryset = PlanetariumDome.objects.all()
+        name = self.request.query_params.get("name")
+
+        if name:
+            queryset = queryset.filter(name__icontains=name)
+
+        return queryset.distinct()
 
 
 class ReservationViewSet(viewsets.ModelViewSet):
@@ -80,12 +99,19 @@ class TicketViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        return Ticket.objects.filter(reservation__user=user).select_related(
+
+        queryset = Ticket.objects.filter(reservation__user=user).select_related(
             "show_session__astronomy_show",
             "show_session__planetarium_dome",
             "reservation",
             "reservation__user",
         )
+
+        show_title = self.request.query_params.get("show_title")
+
+        if show_title:
+            queryset = queryset.filter(show_session__astronomy_show__title__icontains=show_title)
+        return queryset.distinct()
 
 
     def get_serializer_class(self):
