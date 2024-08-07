@@ -1,3 +1,4 @@
+from django.db.models import F, Count
 from rest_framework import viewsets, mixins, status
 
 from planetarium.models import (
@@ -83,6 +84,8 @@ class ShowSessionsViewSet(viewsets.ModelViewSet):
         "astronomy_show",
         "astronomy_show__show_theme",
         "planetarium_dome"
+    ).annotate(
+        tickets_available=(F("planetarium_dome__rows") * F("planetarium_dome__seats_in_row") - Count("ticket"))
     )
     permission_classes = [IsAuthorizedOrReadOnly]
 
@@ -112,7 +115,6 @@ class TicketViewSet(viewsets.ModelViewSet):
         if show_title:
             queryset = queryset.filter(show_session__astronomy_show__title__icontains=show_title)
         return queryset.distinct()
-
 
     def get_serializer_class(self):
         if self.action == "list":

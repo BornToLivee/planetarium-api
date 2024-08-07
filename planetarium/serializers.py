@@ -67,10 +67,11 @@ class ShowSessionsListSerializer(serializers.ModelSerializer):
     show_time = serializers.DateTimeField(format="%Y-%m-%d")
     astronomy_show = AstronomyShowListSerializer(read_only=False)
     planetarium_dome = PlanetariumDomeShowSessionsSerializer(read_only=False)
+    tickets_available = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = ShowSession
-        fields = ("id", "astronomy_show", "planetarium_dome", "show_time")
+        fields = ("id", "astronomy_show", "planetarium_dome", "show_time", "tickets_available")
 
 
 class ShowSessionsRetrieveSerializer(ShowSessionsListSerializer):
