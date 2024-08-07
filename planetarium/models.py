@@ -1,10 +1,11 @@
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 
 from planetarium_service import settings
 
 
 class AstronomyShow(models.Model):
-    title = models.CharField(max_length=200)
+    title = models.CharField(max_length=200, unique=True)
     description = models.TextField()
     show_theme = models.ForeignKey(
         "ShowTheme", on_delete=models.DO_NOTHING, null=True, blank=True
@@ -15,9 +16,9 @@ class AstronomyShow(models.Model):
 
 
 class PlanetariumDome(models.Model):
-    name = models.CharField(max_length=200)
-    rows = models.IntegerField()
-    seats_in_row = models.IntegerField()
+    name = models.CharField(max_length=200, unique=True)
+    rows = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(50)])
+    seats_in_row = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(100)])
 
     @property
     def capacity(self) -> int:
@@ -43,7 +44,7 @@ class Reservation(models.Model):
 
 
 class ShowTheme(models.Model):
-    name = models.CharField(max_length=200)
+    name = models.CharField(max_length=200, unique=True)
 
     def __str__(self):
         return self.name
