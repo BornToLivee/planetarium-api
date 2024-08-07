@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+
 from planetarium.models import (
     ShowTheme,
     AstronomyShow,
@@ -56,7 +57,7 @@ class ReservationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Reservation
-        fields = ("id", "user", "created_at")
+        fields = ("id", "created_at")
 
     def get_created_at(self, obj):
         return obj.formatted_created_at
@@ -122,35 +123,32 @@ class TicketRetrieveSerializer(TicketListSerializer):
 
 
 class TicketCreateSerializer(serializers.ModelSerializer):
-    show_session = serializers.PrimaryKeyRelatedField(
-        queryset=ShowSession.objects.all()
-    )
-    reservation = serializers.PrimaryKeyRelatedField(queryset=Reservation.objects.all())
+    show_session = serializers.PrimaryKeyRelatedField(queryset=ShowSession.objects.all())
 
     class Meta:
         model = Ticket
-        fields = ("id", "row", "seat", "show_session", "reservation")
+        fields = ("id", "row", "seat", "show_session")
 
     def create(self, validated_data):
-        show_session = validated_data.pop("show_session")
-        reservation = validated_data.pop("reservation")
+        request = self.context.get('request')
+        user = request.user
 
-        ticket = Ticket.objects.create(
-            show_session=show_session, reservation=reservation, **validated_data
-        )
+        reservation = Reservation.objects.create(user=user)
+        validated_data['reservation'] = reservation
+
+        ticket = Ticket.objects.create(**validated_data)
         return ticket
 
     def update(self, instance, validated_data):
         show_session = validated_data.get("show_session")
-        reservation = validated_data.get("reservation")
+        reservation = instance.reservation
 
         if show_session is not None:
             instance.show_session = show_session
-        if reservation is not None:
-            instance.reservation = reservation
 
         instance.row = validated_data.get("row", instance.row)
         instance.seat = validated_data.get("seat", instance.seat)
+        instance.reservation = reservation
         instance.save()
 
         return instance
