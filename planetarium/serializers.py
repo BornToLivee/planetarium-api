@@ -1,5 +1,5 @@
 from rest_framework import serializers
-
+from rest_framework.exceptions import ValidationError
 
 from planetarium.models import (
     ShowTheme,
@@ -128,6 +128,19 @@ class TicketCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ticket
         fields = ("id", "row", "seat", "show_session")
+
+    def validate(self, data):
+        row = data['row']
+        seat = data['seat']
+        show_session = data['show_session']
+        planetarium_dome = show_session.planetarium_dome
+
+        if row < 1 or row > planetarium_dome.rows:
+            raise ValidationError(f"Invalid row number. It must be between 1 and {planetarium_dome.rows}.")
+
+        if seat < 1 or seat > planetarium_dome.seats_per_row:
+            raise ValidationError(f"Invalid seat number. It must be between 1 and {planetarium_dome.seats_per_row}.")
+        return data
 
     def create(self, validated_data):
         request = self.context.get('request')
