@@ -128,7 +128,7 @@ class ShowSessionsViewSet(viewsets.ModelViewSet):
         detail=False,
         permission_classes=[IsAuthorized],
     )
-    def nearest_show(self, request, pk=None):
+    def nearest_show(self, request):
         """Endpoint for searching nearest show in schedule"""
         now = datetime.now()
         nearest_session = self.queryset.filter(show_time__gte=now).order_by("show_time").first()
