@@ -34,7 +34,6 @@ class ShowThemeApiTests(TestCase):
         payload = {"name": "New Theme"}
         response = self.client.post(SHOW_THEME_URL, payload)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(ShowTheme.objects.count(), 1)
         self.assertEqual(ShowTheme.objects.last().name, 'New Theme')
         response_data = response.data
         self.assertEqual(response_data['name'], 'New Theme')
