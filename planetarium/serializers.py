@@ -139,8 +139,8 @@ class TicketCreateSerializer(serializers.ModelSerializer):
         if row < 1 or row > planetarium_dome.rows:
             raise ValidationError(f"Invalid row number. It must be between 1 and {planetarium_dome.rows}.")
 
-        if seat < 1 or seat > planetarium_dome.seats_per_row:
-            raise ValidationError(f"Invalid seat number. It must be between 1 and {planetarium_dome.seats_per_row}.")
+        if seat < 1 or seat > planetarium_dome.seats_in_row:
+            raise ValidationError(f"Invalid seat number. It must be between 1 and {planetarium_dome.seats_in_row}.")
         return data
 
     def create(self, validated_data):
