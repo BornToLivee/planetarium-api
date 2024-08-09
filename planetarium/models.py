@@ -17,7 +17,9 @@ class AstronomyShow(models.Model):
 
 class PlanetariumDome(models.Model):
     name = models.CharField(max_length=200, unique=True)
-    rows = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(50)])
+    rows = models.IntegerField(
+        validators=[MinValueValidator(1), MaxValueValidator(50)]
+    )
     seats_in_row = models.IntegerField(
         validators=[MinValueValidator(1), MaxValueValidator(100)]
     )
@@ -32,7 +34,10 @@ class PlanetariumDome(models.Model):
 
 class Reservation(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE
+    )
 
     class Meta:
         ordering = ["-created_at"]
@@ -54,7 +59,10 @@ class ShowTheme(models.Model):
 
 class ShowSession(models.Model):
     astronomy_show = models.ForeignKey(AstronomyShow, on_delete=models.CASCADE)
-    planetarium_dome = models.ForeignKey(PlanetariumDome, on_delete=models.CASCADE)
+    planetarium_dome = models.ForeignKey(
+        PlanetariumDome,
+        on_delete=models.CASCADE
+    )
     show_time = models.DateTimeField()
 
     class Meta:
@@ -75,4 +83,5 @@ class Ticket(models.Model):
         ordering = ["row", "seat"]
 
     def __str__(self):
-        return f"Row: {self.row}, Seat: {self.seat}, ShowSession: {self.show_session}"
+        return (f"Row: {self.row}, Seat: {self.seat}, "
+                f"ShowSession: {self.show_session}")

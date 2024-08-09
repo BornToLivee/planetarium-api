@@ -23,7 +23,7 @@ class ModelStrTests(TestCase):
         # Create instances for each model
         self.astronomy_show = AstronomyShow.objects.create(
             title="Galactic Wonders",
-            description="An exploration of the universe's most fascinating phenomena.",
+            description="An exploration of the universe's",
         )
         self.planetarium_dome = PlanetariumDome.objects.create(
             name="Main Dome", rows=10, seats_in_row=20
@@ -36,7 +36,10 @@ class ModelStrTests(TestCase):
             show_time="2024-08-08 15:00",
         )
         self.ticket = Ticket.objects.create(
-            row=1, seat=1, show_session=self.show_session, reservation=self.reservation
+            row=1,
+            seat=1,
+            show_session=self.show_session,
+            reservation=self.reservation
         )
 
     def test_astronomy_show_str(self):
@@ -53,11 +56,13 @@ class ModelStrTests(TestCase):
 
     def test_show_session_str(self):
         self.assertEqual(
-            str(self.show_session), f"Galactic Wonders at 2024-08-08 15:00"
+            str(self.show_session), "Galactic Wonders at 2024-08-08 15:00"
         )
 
     def test_ticket_str(self):
         self.assertEqual(
             str(self.ticket),
-            f"Row: 1, Seat: 1, ShowSession: Galactic Wonders at 2024-08-08 15:00",
+            "Row: 1, "
+            "Seat: 1, ShowSession: "
+            "Galactic Wonders at 2024-08-08 15:00",
         )

@@ -10,7 +10,7 @@ from planetarium.models import (
     ShowSession,
     Ticket,
 )
-from planetarium.serializers import TicketListSerializer, TicketRetrieveSerializer
+from planetarium.serializers import TicketListSerializer
 
 User = get_user_model()
 
@@ -26,7 +26,9 @@ class TicketViewSetTests(APITestCase):
         )
         self.client.force_authenticate(user=self.user)
 
-        self.astronomy_show = AstronomyShow.objects.create(title="Black Holes1")
+        self.astronomy_show = AstronomyShow.objects.create(
+            title="Black Holes1"
+        )
         self.planetarium_dome = PlanetariumDome.objects.create(
             name="Dome 3", rows=10, seats_in_row=20
         )
@@ -37,7 +39,10 @@ class TicketViewSetTests(APITestCase):
         )
         self.reservation = Reservation.objects.create(user=self.user)
         self.ticket = Ticket.objects.create(
-            row=1, seat=1, show_session=self.show_session, reservation=self.reservation
+            row=1,
+            seat=1,
+            show_session=self.show_session,
+            reservation=self.reservation
         )
 
     def test_create_ticket_for_auth_user(self):
@@ -47,8 +52,12 @@ class TicketViewSetTests(APITestCase):
         self.assertEqual(Ticket.objects.count(), 2)
         self.assertEqual(Ticket.objects.latest("id").row, 2)
         self.assertEqual(Ticket.objects.latest("id").seat, 2)
-        self.assertEqual(Ticket.objects.latest("id").show_session, self.show_session)
-        self.assertEqual(Ticket.objects.latest("id").reservation.user, self.user)
+        self.assertEqual(
+            Ticket.objects.latest("id").show_session, self.show_session
+        )
+        self.assertEqual(
+            Ticket.objects.latest("id").reservation.user, self.user
+        )
 
     def test_list_tickets(self):
         url = reverse("planetarium:ticket-list")
@@ -69,11 +78,13 @@ class TicketViewSetTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_filter_tickets_by_show_title(self):
-        url = f"{reverse('planetarium:ticket-list')}?show_title={self.astronomy_show.title}"
+        url = (f"{reverse('planetarium:ticket-list')}"
+               f"?show_title={self.astronomy_show.title}")
         response = self.client.get(url)
         tickets = Ticket.objects.filter(
             reservation__user=self.user,
-            show_session__astronomy_show__title__icontains=self.astronomy_show.title,
+            show_session__astronomy_show__title__icontains=self.
+            astronomy_show.title,
         )
         serializer = TicketListSerializer(tickets, many=True)
         self.assertEqual(response.status_code, status.HTTP_200_OK)

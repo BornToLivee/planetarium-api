@@ -38,7 +38,9 @@ class ReservationViewSetTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_get_reservation_detail(self):
-        url = reverse("planetarium:reservation-detail", args=[self.reservation.id])
+        url = reverse(
+            "planetarium:reservation-detail", args=[self.reservation.id]
+        )
         response = self.client.get(url)
         serializer = ReservationSerializer(self.reservation)
         self.assertEqual(response.status_code, status.HTTP_200_OK)

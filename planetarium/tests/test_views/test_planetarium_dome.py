@@ -40,14 +40,16 @@ class PlanetariumDomeViewSetTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_get_planetarium_dome_detail(self):
-        url = reverse("planetarium:planetarium_dome-detail", args=[self.dome.id])
+        url = reverse(
+            "planetarium:planetarium_dome-detail", args=[self.dome.id]
+        )
         response = self.client.get(url)
         serializer = PlanetariumDomeSerializer(self.dome)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, serializer.data)
 
     def test_filter_planetarium_domes_by_name(self):
-        dome2 = PlanetariumDome.objects.create(
+        PlanetariumDome.objects.create(
             name="Secondary Dome", rows=15, seats_in_row=20
         )
         response = self.client.get(PLANETARIUM_DOME_URL, {"name": "Main"})

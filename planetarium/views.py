@@ -84,7 +84,8 @@ class AstronomyShowViewSet(viewsets.ModelViewSet):
             OpenApiParameter(
                 "show_theme",
                 type={"type": "list", "items": {"type": "string"}},
-                description="Filter by show_theme (ex. ?show_theme=show_theme)",
+                description="Filter by show_theme "
+                            "(ex. ?show_theme=show_theme)",
             ),
         ]
     )
@@ -152,7 +153,9 @@ class ShowSessionsViewSet(viewsets.ModelViewSet):
         """Endpoint for searching nearest show in schedule"""
         now = datetime.now()
         nearest_session = (
-            self.queryset.filter(show_time__gte=now).order_by("show_time").first()
+            self.queryset.filter(
+                show_time__gte=now
+            ).order_by("show_time").first()
         )
 
         if nearest_session:
@@ -160,7 +163,8 @@ class ShowSessionsViewSet(viewsets.ModelViewSet):
             return Response(serializer.data)
         else:
             return Response(
-                {"detail": "No upcoming shows found."}, status=status.HTTP_404_NOT_FOUND
+                {"detail": "No upcoming shows found."},
+                status=status.HTTP_404_NOT_FOUND
             )
 
 
@@ -171,8 +175,9 @@ class TicketViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-
-        queryset = Ticket.objects.filter(reservation__user=user).select_related(
+        queryset = Ticket.objects.filter(
+            reservation__user=user
+        ).select_related(
             "show_session__astronomy_show",
             "show_session__planetarium_dome",
             "reservation",

@@ -10,13 +10,20 @@ User = get_user_model()
 
 class AstronomyShowViewSetTests(APITestCase):
     def setUp(self):
-        self.user = User.objects.create_user(email="user@tt.com", password="password")
+        self.user = User.objects.create_user(
+            email="user@tt.com",
+            password="password"
+        )
         self.client.force_authenticate(user=self.user)
         self.show_theme = ShowTheme.objects.create(name="Theme 1")
         self.astronomy_show = AstronomyShow.objects.create(
-            title="Show 1", description="Description 1", show_theme=self.show_theme
+            title="Show 1",
+            description="Description 1",
+            show_theme=self.show_theme
         )
-        self.astronomy_show_list_url = reverse("planetarium:astronomy_show-list")
+        self.astronomy_show_list_url = reverse(
+            "planetarium:astronomy_show-list"
+        )
         self.astronomy_show_detail_url = reverse(
             "planetarium:astronomy_show-detail", args=[self.astronomy_show.id]
         )

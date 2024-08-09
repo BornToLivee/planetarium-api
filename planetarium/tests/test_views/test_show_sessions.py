@@ -7,9 +7,11 @@ from planetarium.models import (
     AstronomyShow,
     PlanetariumDome,
     ShowSession,
-    Ticket,
 )
-from planetarium.serializers import ShowSessionsListSerializer, ShowSessionsRetrieveSerializer
+from planetarium.serializers import (
+    ShowSessionsListSerializer,
+    ShowSessionsRetrieveSerializer
+)
 
 User = get_user_model()
 SHOW_SESSIONS_URL = reverse("planetarium:show_session-list")
@@ -55,7 +57,9 @@ class ShowSessionsViewSetTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_get_show_session_detail(self):
-        url = reverse("planetarium:show_session-detail", args=[self.show_session.id])
+        url = reverse(
+            "planetarium:show_session-detail", args=[self.show_session.id]
+        )
         response = self.client.get(url)
         serializer = ShowSessionsRetrieveSerializer(self.show_session)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -65,7 +69,8 @@ class ShowSessionsViewSetTests(APITestCase):
             response.data["astronomy_show"], serializer.data["astronomy_show"]
         )
         self.assertEqual(
-            response.data["planetarium_dome"], serializer.data["planetarium_dome"]
+            response.data["planetarium_dome"],
+            serializer.data["planetarium_dome"]
         )
         self.assertEqual(response.data["show_time"], "2024-08-08, 15:00")
         self.assertEqual(response.data["tickets_available"], 200)
