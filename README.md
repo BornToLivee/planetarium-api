@@ -9,6 +9,7 @@ git clone https://github.com/BornToLivee/planetarium-api
 - docker-compose up --build
 - docker exec -it <container id> sh
 - python managhe.py createsuperuser
+- go to http://localhost:8000/api/planetarium/
 ```
 
 ## Features
