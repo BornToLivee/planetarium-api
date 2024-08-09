@@ -27,6 +27,7 @@ from planetarium.serializers import (
     TicketCreateSerializer, ShowSessionsCreateUpdateSerializer, AstronomyShowCreateUpdateSerializer,
     AstronomyShowRetrieveSerializer,
 )
+from planetarium.services.telegram_bot import send_telegram_message
 
 
 class ShowThemeViewSet(viewsets.ModelViewSet):
@@ -166,3 +167,16 @@ class TicketViewSet(viewsets.ModelViewSet):
         if self.action == "create":
             return TicketCreateSerializer
         return TicketRetrieveSerializer
+
+    def create(self, request, *args, **kwargs):
+        response = super().create(request, *args, **kwargs)
+        if response.status_code == status.HTTP_201_CREATED:
+            ticket = Ticket.objects.get(id=response.data["id"])
+            message = (
+                f"New ticket created by {ticket.reservation.user.email}\n"
+                f"Event: {ticket.show_session.astronomy_show.title}\n"
+                f"Row: {ticket.row}, Seat: {ticket.seat}\n"
+                f"Time: {ticket.show_session.show_time}"
+            )
+            send_telegram_message(message)
+        return response
