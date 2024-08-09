@@ -1,39 +1,46 @@
 from datetime import datetime
 
-from django.db.models import F, Count
+from django.db.models import Count, F
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
-from drf_spectacular.utils import extend_schema, OpenApiParameter
-from rest_framework import viewsets, status
-from rest_framework.response import Response
+from drf_spectacular.utils import OpenApiParameter, extend_schema
+from rest_framework import status, viewsets
 from rest_framework.decorators import action
+from rest_framework.response import Response
 
 from planetarium.models import (
-    Reservation,
-    ShowSession,
-    Ticket,
-    ShowTheme,
     AstronomyShow,
     PlanetariumDome,
+    Reservation,
+    ShowSession,
+    ShowTheme,
+    Ticket,
 )
-from planetarium.permissions import IsAdminOrReadOnly, IsAuthorized, IsAuthorizedOrReadOnly
+from planetarium.permissions import (
+    IsAdminOrReadOnly,
+    IsAuthorized,
+    IsAuthorizedOrReadOnly,
+)
 from planetarium.serializers import (
-    ReservationSerializer,
-    ShowThemeSerializer,
-    PlanetariumDomeSerializer,
+    AstronomyShowCreateUpdateSerializer,
     AstronomyShowListSerializer,
+    AstronomyShowRetrieveSerializer,
+    PlanetariumDomeSerializer,
+    ReservationSerializer,
+    ShowSessionsCreateUpdateSerializer,
     ShowSessionsListSerializer,
     ShowSessionsRetrieveSerializer,
+    ShowThemeSerializer,
+    TicketCreateSerializer,
     TicketListSerializer,
     TicketRetrieveSerializer,
-    TicketCreateSerializer, ShowSessionsCreateUpdateSerializer, AstronomyShowCreateUpdateSerializer,
-    AstronomyShowRetrieveSerializer,
 )
 from planetarium.services.telegram_bot import send_telegram_message
 
 
 class ShowThemeViewSet(viewsets.ModelViewSet):
     """Endpoints of the show themes in planetarium with basic CRUD operations"""
+
     queryset = ShowTheme.objects.all()
     serializer_class = ShowThemeSerializer
     permission_classes = [IsAdminOrReadOnly]
@@ -45,6 +52,7 @@ class ShowThemeViewSet(viewsets.ModelViewSet):
 
 class AstronomyShowViewSet(viewsets.ModelViewSet):
     """Endpoints of the astronomy shows in planetarium with basic CRUD operations"""
+
     permission_classes = [IsAdminOrReadOnly]
 
     def get_queryset(self):
@@ -86,6 +94,7 @@ class AstronomyShowViewSet(viewsets.ModelViewSet):
 
 class PlanetariumDomeViewSet(viewsets.ModelViewSet):
     """Endpoints of the planetarium domes description with basic CRUD operations"""
+
     serializer_class = PlanetariumDomeSerializer
     permission_classes = [IsAdminOrReadOnly]
 
@@ -101,6 +110,7 @@ class PlanetariumDomeViewSet(viewsets.ModelViewSet):
 
 class ReservationViewSet(viewsets.ModelViewSet):
     """Endpoints of the reservations in planetarium with basic CRUD operations"""
+
     queryset = Reservation.objects.select_related("user")
     serializer_class = ReservationSerializer
     permission_classes = [IsAuthorized]
@@ -114,12 +124,14 @@ class ReservationViewSet(viewsets.ModelViewSet):
 
 class ShowSessionsViewSet(viewsets.ModelViewSet):
     """Endpoints of the show sessions in planetarium with basic CRUD operations"""
+
     queryset = ShowSession.objects.select_related(
-        "astronomy_show",
-        "astronomy_show__show_theme",
-        "planetarium_dome"
+        "astronomy_show", "astronomy_show__show_theme", "planetarium_dome"
     ).annotate(
-        tickets_available=(F("planetarium_dome__rows") * F("planetarium_dome__seats_in_row") - Count("ticket"))
+        tickets_available=(
+            F("planetarium_dome__rows") * F("planetarium_dome__seats_in_row")
+            - Count("ticket")
+        )
     )
     permission_classes = [IsAuthorizedOrReadOnly]
 
@@ -138,17 +150,22 @@ class ShowSessionsViewSet(viewsets.ModelViewSet):
     def nearest_show(self, request):
         """Endpoint for searching nearest show in schedule"""
         now = datetime.now()
-        nearest_session = self.queryset.filter(show_time__gte=now).order_by("show_time").first()
+        nearest_session = (
+            self.queryset.filter(show_time__gte=now).order_by("show_time").first()
+        )
 
         if nearest_session:
             serializer = self.get_serializer(nearest_session)
             return Response(serializer.data)
         else:
-            return Response({"detail": "No upcoming shows found."}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {"detail": "No upcoming shows found."}, status=status.HTTP_404_NOT_FOUND
+            )
 
 
 class TicketViewSet(viewsets.ModelViewSet):
     """Endpoints of the tickets in planetarium with basic CRUD operations"""
+
     permission_classes = [IsAuthorized]
 
     def get_queryset(self):
@@ -164,7 +181,9 @@ class TicketViewSet(viewsets.ModelViewSet):
         show_title = self.request.query_params.get("show_title")
 
         if show_title:
-            queryset = queryset.filter(show_session__astronomy_show__title__icontains=show_title)
+            queryset = queryset.filter(
+                show_session__astronomy_show__title__icontains=show_title
+            )
         return queryset.distinct()
 
     def get_serializer_class(self):

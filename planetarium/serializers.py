@@ -2,11 +2,11 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
 from planetarium.models import (
-    ShowTheme,
     AstronomyShow,
     PlanetariumDome,
     Reservation,
     ShowSession,
+    ShowTheme,
     Ticket,
 )
 
@@ -35,9 +35,7 @@ class AstronomyShowRetrieveSerializer(AstronomyShowListSerializer):
 
 
 class AstronomyShowCreateUpdateSerializer(AstronomyShowRetrieveSerializer):
-    show_theme = serializers.PrimaryKeyRelatedField(
-        queryset=ShowTheme.objects.all()
-    )
+    show_theme = serializers.PrimaryKeyRelatedField(queryset=ShowTheme.objects.all())
 
 
 class PlanetariumDomeSerializer(serializers.ModelSerializer):
@@ -71,7 +69,13 @@ class ShowSessionsListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ShowSession
-        fields = ("id", "astronomy_show", "planetarium_dome", "show_time", "tickets_available")
+        fields = (
+            "id",
+            "astronomy_show",
+            "planetarium_dome",
+            "show_time",
+            "tickets_available",
+        )
 
 
 class ShowSessionsRetrieveSerializer(ShowSessionsListSerializer):
@@ -124,31 +128,37 @@ class TicketRetrieveSerializer(TicketListSerializer):
 
 
 class TicketCreateSerializer(serializers.ModelSerializer):
-    show_session = serializers.PrimaryKeyRelatedField(queryset=ShowSession.objects.all())
+    show_session = serializers.PrimaryKeyRelatedField(
+        queryset=ShowSession.objects.all()
+    )
 
     class Meta:
         model = Ticket
         fields = ("id", "row", "seat", "show_session")
 
     def validate(self, data):
-        row = data['row']
-        seat = data['seat']
-        show_session = data['show_session']
+        row = data["row"]
+        seat = data["seat"]
+        show_session = data["show_session"]
         planetarium_dome = show_session.planetarium_dome
 
         if row < 1 or row > planetarium_dome.rows:
-            raise ValidationError(f"Invalid row number. It must be between 1 and {planetarium_dome.rows}.")
+            raise ValidationError(
+                f"Invalid row number. It must be between 1 and {planetarium_dome.rows}."
+            )
 
         if seat < 1 or seat > planetarium_dome.seats_in_row:
-            raise ValidationError(f"Invalid seat number. It must be between 1 and {planetarium_dome.seats_in_row}.")
+            raise ValidationError(
+                f"Invalid seat number. It must be between 1 and {planetarium_dome.seats_in_row}."
+            )
         return data
 
     def create(self, validated_data):
-        request = self.context.get('request')
+        request = self.context.get("request")
         user = request.user
 
         reservation = Reservation.objects.create(user=user)
-        validated_data['reservation'] = reservation
+        validated_data["reservation"] = reservation
 
         ticket = Ticket.objects.create(**validated_data)
         return ticket

@@ -1,4 +1,4 @@
-from django.core.validators import MinValueValidator, MaxValueValidator
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
 from planetarium_service import settings
@@ -18,7 +18,9 @@ class AstronomyShow(models.Model):
 class PlanetariumDome(models.Model):
     name = models.CharField(max_length=200, unique=True)
     rows = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(50)])
-    seats_in_row = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(100)])
+    seats_in_row = models.IntegerField(
+        validators=[MinValueValidator(1), MaxValueValidator(100)]
+    )
 
     @property
     def capacity(self) -> int:

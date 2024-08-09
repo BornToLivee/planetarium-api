@@ -1,7 +1,8 @@
-from rest_framework.test import APITestCase, APIClient
-from rest_framework import status
-from django.urls import reverse
 from django.contrib.auth import get_user_model
+from django.urls import reverse
+from rest_framework import status
+from rest_framework.test import APIClient, APITestCase
+
 from planetarium.models import Reservation
 from planetarium.serializers import ReservationSerializer
 
@@ -12,7 +13,9 @@ RESERVATION_URL = reverse("planetarium:reservation-list")
 class ReservationViewSetTests(APITestCase):
     def setUp(self):
         self.client = APIClient()
-        self.user = User.objects.create_user(email="testuser@test.com", password="password123")
+        self.user = User.objects.create_user(
+            email="testuser@test.com", password="password123"
+        )
         self.client.force_authenticate(user=self.user)
         self.reservation = Reservation.objects.create(user=self.user)
 

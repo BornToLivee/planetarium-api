@@ -1,8 +1,8 @@
 from django.contrib.auth import get_user_model
 from django.test import TestCase
-from rest_framework.test import APIClient
-from rest_framework import status
 from django.urls import reverse
+from rest_framework import status
+from rest_framework.test import APIClient
 
 from planetarium.models import ShowTheme
 from planetarium.serializers import ShowThemeSerializer
@@ -29,17 +29,21 @@ class ShowThemeApiTests(TestCase):
         self.assertEqual(response_data["results"], serializer.data)
 
     def test_admin_create_show_theme(self):
-        staff_user = get_user_model().objects.create_user(email='staffuser@tt.com', password='password', is_staff=True)
+        staff_user = get_user_model().objects.create_user(
+            email="staffuser@tt.com", password="password", is_staff=True
+        )
         self.client.force_authenticate(user=staff_user)
         payload = {"name": "New Theme"}
         response = self.client.post(SHOW_THEME_URL, payload)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(ShowTheme.objects.last().name, 'New Theme')
+        self.assertEqual(ShowTheme.objects.last().name, "New Theme")
         response_data = response.data
-        self.assertEqual(response_data['name'], 'New Theme')
+        self.assertEqual(response_data["name"], "New Theme")
 
     def test_auth_user_cant_create_show_theme(self):
-        auth_user = get_user_model().objects.create_user(email='staffuser@tt.com', password='password')
+        auth_user = get_user_model().objects.create_user(
+            email="staffuser@tt.com", password="password"
+        )
         self.client.force_authenticate(user=auth_user)
         payload = {"name": "New Theme"}
         response = self.client.post(SHOW_THEME_URL, payload)

@@ -6,23 +6,23 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('planetarium', '0002_alter_planetariumdome_rows_and_more'),
+        ("planetarium", "0002_alter_planetariumdome_rows_and_more"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='astronomyshow',
-            name='title',
+            model_name="astronomyshow",
+            name="title",
             field=models.CharField(max_length=200, unique=True),
         ),
         migrations.AlterField(
-            model_name='planetariumdome',
-            name='name',
+            model_name="planetariumdome",
+            name="name",
             field=models.CharField(max_length=200, unique=True),
         ),
         migrations.AlterField(
-            model_name='showtheme',
-            name='name',
+            model_name="showtheme",
+            name="name",
             field=models.CharField(max_length=200, unique=True),
         ),
     ]

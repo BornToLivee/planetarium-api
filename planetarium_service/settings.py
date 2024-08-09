@@ -173,10 +173,10 @@ SIMPLE_JWT = {
 
 
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'Planetarium API',
-    'DESCRIPTION': 'API to manage your own planetarium service',
-    'VERSION': '1.0.0',
-    'SERVE_INCLUDE_SCHEMA': False,
+    "TITLE": "Planetarium API",
+    "DESCRIPTION": "API to manage your own planetarium service",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
 }
 
 
@@ -184,8 +184,8 @@ TELEGRAM_BOT_TOKEN = "7460779223:AAE81dAZAL1x9RzdZLlzbWglZO5-b3zEGiM"
 TELEGRAM_CHAT_ID = "270187088"
 
 CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
-        'LOCATION': 'redis://redis:6379/1',
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": "redis://redis:6379/1",
     }
 }
