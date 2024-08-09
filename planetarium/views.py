@@ -88,6 +88,7 @@ class AstronomyShowViewSet(viewsets.ModelViewSet):
             ),
         ]
     )
+    @method_decorator(cache_page(60 * 60 * 5))
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
 
