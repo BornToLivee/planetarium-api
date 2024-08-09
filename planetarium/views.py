@@ -1,6 +1,8 @@
 from datetime import datetime
 
 from django.db.models import F, Count
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework import viewsets, status
 from rest_framework.response import Response
@@ -35,6 +37,10 @@ class ShowThemeViewSet(viewsets.ModelViewSet):
     queryset = ShowTheme.objects.all()
     serializer_class = ShowThemeSerializer
     permission_classes = [IsAdminOrReadOnly]
+
+    @method_decorator(cache_page(60 * 60 * 5))
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
 
 
 class AstronomyShowViewSet(viewsets.ModelViewSet):
