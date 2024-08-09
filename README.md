@@ -21,6 +21,16 @@ git clone https://github.com/BornToLivee/planetarium-api
 * Authentication and JWT authorization for user
 * Creating, updating, deleting actions on all endpoints with validation
 
+## Technology used
+
+1.Django Rest Framework
+2.Docker
+3.PostgreSQL
+4.Redis
+5.Swagger
+6.JWT
+
+
 ## Author
 
 Bohdan Zinchenko - https://github.com/BornToLivee
