@@ -3,14 +3,38 @@
 DRF project for managing planetarium and watching shows
 
 ### How to run
+
+1. Clone the Repository
 ```shell
 git clone https://github.com/BornToLivee/planetarium-api
-- copy .env.sample -> .env add fill it with all requirement data
-- docker-compose up --build
-- docker exec -it <container id> sh
-- python managhe.py createsuperuser
-- go to http://localhost:8000/api/planetarium/
 ```
+If project is empty, checkout to develop branch
+
+2. Configure Environment Variables
+```shell
+cp .env.sample .env
+```
+Open the .env file and fill in all the required fields with the appropriate data.
+3. Build and Run the Docker Containers
+```shell
+docker-compose up --build
+```
+4. Create a Superuser
+
+List the running Docker containers to find the container_id of the web service:
+```shell
+docker ps
+```
+Access the running container with:
+```shell
+docker exec -it <container_id> sh
+```
+Inside the container, create a superuser by running:
+```shell
+python manage.py createsuperuser
+```
+5. Access the API
+http://localhost:8000/api/planetarium/
 
 ## Features
 
