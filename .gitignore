@@ -1,0 +1,7 @@
+__pycache__/
+db.sqlite3
+media
+.venv
+planetarium_diagram.jpg
+.env
+.idea/*
